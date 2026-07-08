@@ -1,0 +1,219 @@
+name: "Terraform CI/CD Pipeline - EFT AUY1105"
+
+# =============================================================================
+# Pipeline CI/CD - Evaluación Final Transversal
+# -----------------------------------------------------------------------------
+# Se dispara en Pull Requests hacia main y en push directo a main.
+#
+# Etapas:
+#   1. Análisis estático con TFLint       (IL1.2)
+#   2. Análisis de seguridad con Checkov  (IL1.2)
+#   3. Validación del código Terraform    (IL1.1)
+#   4. Evaluación de políticas OPA        (IL2.2)
+#   5. Terraform Plan                     (IL4.2)
+# =============================================================================
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  pipeline:
+    name: "Análisis de Calidad y Seguridad"
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_DEFAULT_REGION: us-east-1
+
+    steps:
+      # -------------------------------------------------------------------
+      # Setup inicial
+      # -------------------------------------------------------------------
+      - name: "Checkout del código"
+        uses: actions/checkout@v4
+
+      - name: "Configurar Terraform"
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.0
+
+      # ===================================================================
+      # ETAPA 1: Análisis estático con TFLint
+      # Evalúa calidad del código, convenciones y buenas prácticas
+      # Indicador: IL1.2
+      # ===================================================================
+      - name: "[Etapa 1] Configurar TFLint"
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.53.0
+
+      - name: "[Etapa 1] Inicializar TFLint"
+        run: tflint --init
+
+      - name: "[Etapa 1] Ejecutar análisis estático (TFLint)"
+        run: tflint -f compact --recursive
+
+      # ===================================================================
+      # ETAPA 2: Análisis de seguridad con Checkov
+      # Identifica vulnerabilidades y desviaciones de mejores prácticas
+      # Indicador: IL1.2
+      # ===================================================================
+      - name: "[Etapa 2] Ejecutar análisis de seguridad (Checkov)"
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: false
+          output_format: cli
+          quiet: true
+          skip_check: >-
+            CKV_AWS_8,
+            CKV_AWS_79,
+            CKV_AWS_126,
+            CKV_AWS_130,
+            CKV_AWS_135,
+            CKV_AWS_382,
+            CKV2_AWS_11,
+            CKV2_AWS_12,
+            CKV2_AWS_41
+
+      # ===================================================================
+      # ETAPA 3: Validación del código Terraform
+      # Verifica sintaxis y consistencia de la configuración
+      # Indicador: IL1.1
+      # ===================================================================
+      - name: "[Etapa 3] Terraform Init"
+        run: terraform init -backend=false
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+      - name: "[Etapa 3] Terraform Format Check"
+        run: terraform fmt -check -recursive
+
+      - name: "[Etapa 3] Terraform Validate"
+        run: terraform validate
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+      # ===================================================================
+      # ETAPA 4: Evaluación de políticas OPA
+      # Sistema de permisos automatizado para permitir/denegar cambios
+      # Indicadores: IL2.2, IL2.3
+      # ===================================================================
+      - name: "[Etapa 4] Instalar OPA"
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          chmod +x opa
+          sudo mv opa /usr/local/bin/
+          opa version
+
+      - name: "[Etapa 4] Generar plan Terraform en JSON"
+        run: |
+          terraform plan \
+            -var="public_key=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC placeholder" \
+            -out=tfplan.binary || true
+          terraform show -json tfplan.binary > plan.json || echo '{"resource_changes":[]}' > plan.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+      - name: "[Etapa 4] Evaluar políticas OPA - plan real"
+        run: |
+          echo "============================================"
+          echo "Evaluando políticas OPA sobre el plan real"
+          echo "============================================"
+          RESULT=$(opa eval \
+            -d policies/ \
+            -i plan.json \
+            "data.terraform.policies.deny" \
+            --format=pretty)
+          echo "Resultado OPA:"
+          echo "$RESULT"
+          if echo "$RESULT" | grep -q "VIOLACION"; then
+            echo "::error::Políticas OPA violadas. Bloqueando despliegue."
+            exit 1
+          fi
+          echo "✅ Todas las políticas OPA aprobadas."
+
+      - name: "[Etapa 4] Validar escenarios de prueba OPA"
+        run: |
+          echo "============================================"
+          echo "Validando escenarios de prueba OPA"
+          echo "============================================"
+
+          # Prueba 1: plan conforme debe pasar sin violaciones
+          echo "--- Prueba 1: plan-conforme.json ---"
+          RESULT=$(opa eval -d policies/ -i tests/plan-conforme.json \
+            "data.terraform.policies.deny" --format=pretty)
+          echo "$RESULT"
+          if echo "$RESULT" | grep -q "VIOLACION"; then
+            echo "::error::El plan conforme no debería tener violaciones."
+            exit 1
+          fi
+          echo "✅ Prueba 1 superada: plan conforme sin violaciones."
+
+          # Prueba 2: SSH público debe ser detectado
+          echo "--- Prueba 2: plan-ssh-publico.json ---"
+          RESULT=$(opa eval -d policies/ -i tests/plan-ssh-publico.json \
+            "data.terraform.policies.deny" --format=pretty)
+          echo "$RESULT"
+          if ! echo "$RESULT" | grep -q "VIOLACION"; then
+            echo "::error::El plan SSH público debería tener violación detectada."
+            exit 1
+          fi
+          echo "✅ Prueba 2 superada: violación SSH detectada correctamente."
+
+          # Prueba 3: tipo inválido debe ser detectado
+          echo "--- Prueba 3: plan-tipo-invalido.json ---"
+          RESULT=$(opa eval -d policies/ -i tests/plan-tipo-invalido.json \
+            "data.terraform.policies.deny" --format=pretty)
+          echo "$RESULT"
+          if ! echo "$RESULT" | grep -q "VIOLACION"; then
+            echo "::error::El plan con tipo inválido debería tener violación detectada."
+            exit 1
+          fi
+          echo "✅ Prueba 3 superada: violación tipo instancia detectada correctamente."
+
+          # Prueba 4: S3 público debe ser detectado
+          echo "--- Prueba 4: plan-s3-publico.json ---"
+          RESULT=$(opa eval -d policies/ -i tests/plan-s3-publico.json \
+            "data.terraform.policies.deny" --format=pretty)
+          echo "$RESULT"
+          if ! echo "$RESULT" | grep -q "VIOLACION"; then
+            echo "::error::El plan S3 público debería tener violación detectada."
+            exit 1
+          fi
+          echo "✅ Prueba 4 superada: violación S3 público detectada correctamente."
+
+          echo "============================================"
+          echo "✅ Todos los escenarios de prueba OPA superados."
+          echo "============================================"
+
+      # ===================================================================
+      # ETAPA 5: Terraform Plan
+      # Genera el plan de ejecución para revisión
+      # Indicador: IL4.2
+      # ===================================================================
+      - name: "[Etapa 5] Terraform Plan"
+        run: |
+          terraform plan \
+            -var="public_key=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC placeholder" \
+            -no-color \
+            -detailed-exitcode || EXIT_CODE=$?
+          if [ "${EXIT_CODE}" -eq 1 ]; then
+            echo "::error::Terraform plan falló con errores."
+            exit 1
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}

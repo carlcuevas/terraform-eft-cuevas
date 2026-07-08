@@ -1,0 +1,67 @@
+{
+  "_comentario": "PLAN DE PRUEBA - Escenario: Bucket S3 con acceso público habilitado. Resultado esperado: VIOLACION detectada por denegar_s3_publico.rego",
+  "resource_changes": [
+    {
+      "address": "module.networking.aws_security_group.main",
+      "type": "aws_security_group",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "name": "eft-cuevas-sg",
+          "description": "Security Group para eft-cuevas",
+          "ingress": [
+            {
+              "description": "HTTP",
+              "from_port": 80,
+              "to_port": 80,
+              "protocol": "tcp",
+              "cidr_blocks": ["0.0.0.0/0"]
+            },
+            {
+              "description": "SSH restringido",
+              "from_port": 22,
+              "to_port": 22,
+              "protocol": "tcp",
+              "cidr_blocks": ["10.0.0.0/8"]
+            }
+          ],
+          "egress": [
+            {
+              "from_port": 0,
+              "to_port": 0,
+              "protocol": "-1",
+              "cidr_blocks": ["0.0.0.0/0"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "module.compute.aws_instance.main",
+      "type": "aws_instance",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "ami": "ami-0c02fb55956c7d316",
+          "instance_type": "t2.micro",
+          "tags": {
+            "Name": "eft-cuevas-ec2"
+          }
+        }
+      }
+    },
+    {
+      "address": "module.storage.aws_s3_bucket_public_access_block.main",
+      "type": "aws_s3_bucket_public_access_block",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "block_public_acls": false,
+          "block_public_policy": false,
+          "ignore_public_acls": false,
+          "restrict_public_buckets": false
+        }
+      }
+    }
+  ]
+}
