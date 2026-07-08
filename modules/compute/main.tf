@@ -9,6 +9,16 @@
 # Indicadores evaluados: IL3.1, IL3.2, IL4.2
 # =============================================================================
 
+terraform {
+  required_version = ">= 1.9.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 resource "aws_key_pair" "main" {
   key_name   = "${var.project_name}-keypair"
   public_key = var.public_key
