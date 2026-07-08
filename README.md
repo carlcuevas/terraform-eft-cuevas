@@ -367,6 +367,7 @@ Este proyecto sigue el estándar [SemVer 2.0.0](https://semver.org/lang/es/):
 |---|---|
 | `v1.0.0` | EP1: Infraestructura base + pipeline CI/CD + políticas OPA |
 | `v2.0.0` | EP2: Refactorización a módulos reutilizables |
+| `v2.1.0` | EP3: Gestión avanzada del estado (import, refresh, taint, state rm) |
 | `v3.0.0` | EFT: Consolidado final con nuevas políticas y optimizaciones |
 
 El historial completo de cambios está disponible en [CHANGELOG.md](./CHANGELOG.md).

@@ -42,6 +42,25 @@ PATCH → Correcciones de errores compatibles con versiones anteriores
 
 ---
 
+## [2.1.0] - Evaluación Parcial N°3
+
+### Agregado
+- Gestión avanzada del estado de Terraform con 3 escenarios:
+  - **Escenario 1:** Recuperación del estado perdido usando `terraform import` para los 4 recursos (VPC, Subnet, SG, EC2)
+  - **Escenario 2:** Sincronización de estado con `terraform refresh` y recreación de EC2 con `terraform taint`
+  - **Escenario 3:** Eliminación del Security Group del estado sin destruirlo en AWS usando `terraform state rm`
+- Comandos CLI utilizados: `terraform import`, `terraform refresh`, `terraform taint`, `terraform untaint`, `terraform state rm`, `terraform state list`, `terraform state show`
+- Evidencias de consola almacenadas con `tee` en directorio `evidencias/`
+
+### Modificado
+- `main.tf` optimizado separando variables y outputs en archivos independientes
+- Código refactorizado eliminando valores hardcodeados, usando variables parametrizadas
+
+### Compatibilidad con versiones anteriores
+- ✅ Compatible con `v2.x`: la infraestructura base no cambia, solo se gestiona el estado
+
+---
+
 ## [2.0.0] - Evaluación Parcial N°2
 
 ### Agregado
