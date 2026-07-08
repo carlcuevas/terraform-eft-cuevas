@@ -363,11 +363,11 @@ Checkov analiza el código en busca de configuraciones de seguridad incorrectas.
 
 Este proyecto sigue el estándar [SemVer 2.0.0](https://semver.org/lang/es/):
 
-| Versión | Fecha | Descripción |
-|---|---|---|
-| `v1.0.0` | 2024-09-20 | EP1: Infraestructura base + pipeline CI/CD + políticas OPA |
-| `v2.0.0` | 2024-10-18 | EP2: Refactorización a módulos reutilizables |
-| `v3.0.0` | 2024-11-15 | EFT: Consolidado final con nuevas políticas y optimizaciones |
+| Versión | Descripción |
+|---|---|
+| `v1.0.0` | EP1: Infraestructura base + pipeline CI/CD + políticas OPA |
+| `v2.0.0` | EP2: Refactorización a módulos reutilizables |
+| `v3.0.0` | EFT: Consolidado final con nuevas políticas y optimizaciones |
 
 El historial completo de cambios está disponible en [CHANGELOG.md](./CHANGELOG.md).
 

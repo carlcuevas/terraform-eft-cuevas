@@ -17,7 +17,7 @@ PATCH → Correcciones de errores compatibles con versiones anteriores
 
 ---
 
-## [3.0.0] - 2024-11-15 - Evaluación Final Transversal
+## [3.0.0] - Evaluación Final Transversal
 
 ### Agregado
 - Política OPA `denegar_s3_publico.rego` para validar configuración de acceso público en buckets S3
@@ -42,7 +42,7 @@ PATCH → Correcciones de errores compatibles con versiones anteriores
 
 ---
 
-## [2.0.0] - 2024-10-18 - Evaluación Parcial N°2
+## [2.0.0] - Evaluación Parcial N°2
 
 ### Agregado
 - Módulo `networking` con VPC, Subnet pública, Internet Gateway, Route Table y Security Group
@@ -67,7 +67,7 @@ PATCH → Correcciones de errores compatibles con versiones anteriores
 
 ---
 
-## [1.0.0] - 2024-09-20 - Evaluación Parcial N°1
+## [1.0.0] - Evaluación Parcial N°1
 
 ### Agregado
 - Infraestructura base en AWS: VPC, Subnet pública, Internet Gateway, Route Table
