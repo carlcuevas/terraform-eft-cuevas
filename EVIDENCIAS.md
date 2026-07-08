@@ -207,3 +207,28 @@ El PR fue mergeado exitosamente después de que todas las etapas del pipeline pa
 | #6 | ✅ success | — | Run post-merge a `main` |
 
 > Este historial de iteraciones evidencia el proceso de revisión y mejora continua del código, alineado con el indicador **IL1.1** (pull requests con documentación detallada).
+
+<img width="1012" height="486" alt="cap1" src="https://github.com/user-attachments/assets/3fd82265-5fb5-40b9-a6a2-3f9168b4afa2" />
+<img width="1566" height="282" alt="cap2" src="https://github.com/user-attachments/assets/95b044bc-9821-491d-886b-d3f49cc3ffdc" />
+<img width="1569" height="577" alt="cap3" src="https://github.com/user-attachments/assets/c66987d3-3ef2-41d4-ae52-a31be4372b22" />
+<img width="1046" height="803" alt="cap4" src="https://github.com/user-attachments/assets/35a7b445-a970-401f-a6a0-04626efe1c63" />
+<img width="1054" height="606" alt="cap5" src="https://github.com/user-attachments/assets/e7a2e5cd-1d36-470a-a095-bab44e9829c1" />
+<img width="1181" height="493" alt="cap6" src="https://github.com/user-attachments/assets/3edebc62-296c-4fac-b89c-eef71f5acf78" />
+<img width="1001" height="413" alt="cap7" src="https://github.com/user-attachments/assets/27aaf3e9-6729-4ec3-83ff-d04b200332d1" />
+<img width="1179" height="667" alt="cap8" src="https://github.com/user-attachments/assets/ddbde332-c3f4-4d9b-9b5a-1dfb92b10fb4" />
+<img width="1035" height="348" alt="cap9" src="https://github.com/user-attachments/assets/7f302a3e-64ff-4792-8519-83ea0db4adc9" />
+<img width="1293" height="497" alt="cap10" src="https://github.com/user-attachments/assets/bc70c8a1-ad88-4be7-a7da-a9b11c7fa012" />
+<img width="803" height="614" alt="cap11" src="https://github.com/user-attachments/assets/59892b45-2fe1-42bc-a08e-5d8b6d4d1316" />
+<img width="676" height="661" alt="cap12" src="https://github.com/user-attachments/assets/6d240c9f-9bae-420e-8358-326fd03f62a3" />
+<img width="701" height="188" alt="cap13" src="https://github.com/user-attachments/assets/2ed3dd7a-1882-4c98-9dcd-33dd934835c8" />
+<img width="1032" height="768" alt="cap14 1" src="https://github.com/user-attachments/assets/217d7b9b-8c05-4b1a-8171-e7ad66a8351e" />
+<img width="1021" height="458" alt="cap14 2" src="https://github.com/user-attachments/assets/8c0fd4d7-dafb-4e44-b5aa-beddf46c0845" />
+<img width="1143" height="617" alt="cap15" src="https://github.com/user-attachments/assets/a9e41da0-e6a5-4502-8c7f-052428abfab2" />
+<img width="1143" height="617" alt="cap15" src="https://github.com/user-attachments/assets/9694da35-215f-4974-9b42-8868fb4d8c13" />
+<img width="1025" height="665" alt="cap16" src="https://github.com/user-attachments/assets/5dbde477-9815-40de-be77-27292086b6fe" />
+<img width="1138" height="370" alt="cap17" src="https://github.com/user-attachments/assets/f050a72a-04af-4065-83b9-df1a333aa1a8" />
+<img width="1195" height="678" alt="cap18 1" src="https://github.com/user-attachments/assets/051286cf-4dec-4e20-80b0-48b335bdbcd9" />
+<img width="1066" height="641" alt="cap18 2" src="https://github.com/user-attachments/assets/efe34ae5-7c39-453a-96ad-cd82ec351610" />
+<img width="1281" height="501" alt="cap18 3" src="https://github.com/user-attachments/assets/48026ea9-7488-4c0d-b315-80d2ad1e80ee" />
+<img width="991" height="616" alt="cap18 4" src="https://github.com/user-attachments/assets/32048b83-1096-49a2-8890-405073f2d826" />
+
