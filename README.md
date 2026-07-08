@@ -438,7 +438,61 @@ El pipeline de 5 etapas asegura un flujo de entrega continuo y eficiente, donde 
 
 ---
 
-## 12. Anexos
+## 12. Evidencias del pipeline CI/CD
+
+### Pipeline 100% verde — Run #5
+
+| Etapa | Herramienta | Resultado |
+|---|---|---|
+| 1 — Análisis estático | TFLint v0.53.0 | ✅ Sin errores |
+| 2 — Análisis de seguridad | Checkov 3.3.7 | ✅ 21 passed, 0 failed |
+| 3 — Formato + Validación | terraform fmt + validate | ✅ Configuration is valid |
+| 4 — Políticas OPA | OPA latest | ✅ 4/4 escenarios superados |
+| 5 — Plan de infraestructura | terraform plan | ✅ 14 recursos a crear |
+
+🔗 [Ver Run #5 completo](https://github.com/carlcuevas/terraform-eft-cuevas/actions/runs/28976768351)  
+🔗 [Ver Pull Request #1 mergeado](https://github.com/carlcuevas/terraform-eft-cuevas/pull/1)  
+🔗 [Ver evidencias detalladas](./EVIDENCIAS.md)
+
+### Checkov: 21 checks pasados
+
+```
+terraform scan results:
+Passed checks: 21, Failed checks: 0, Skipped checks: 0
+```
+
+### OPA: 4 escenarios de prueba
+
+```
+✅ Prueba 1: plan conforme           → [] Sin violaciones
+✅ Prueba 2: SSH expuesto a internet → VIOLACION detectada ✓
+✅ Prueba 3: EC2 tipo t2.large       → VIOLACION detectada ✓
+✅ Prueba 4: S3 acceso público       → VIOLACION detectada ✓
+```
+
+### Terraform Plan: 14 recursos
+
+```
+Plan: 14 to add, 0 to change, 0 to destroy.
+  + module.networking.aws_vpc.main
+  + module.networking.aws_subnet.public
+  + module.networking.aws_internet_gateway.main
+  + module.networking.aws_route_table.public
+  + module.networking.aws_security_group.main
+  + module.compute.aws_instance.main        (t2.micro)
+  + module.compute.aws_key_pair.main
+  + module.compute.aws_eip.main
+  + module.storage.aws_s3_bucket.main
+  + module.storage.aws_s3_bucket_versioning.main
+  + module.storage.aws_s3_bucket_public_access_block.main
+  + module.storage.aws_s3_bucket_server_side_encryption_configuration.main
+  + module.storage.aws_s3_bucket_lifecycle_configuration.main
+  + module.networking.aws_route_table_association.public
+```
+
+---
+
+## 13. Anexos
 
 ### Repositorio GitHub
 
